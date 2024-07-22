@@ -1,7 +1,7 @@
 package contract
 
-type NewCampaing struct {
-	Nome    string
+type NewCampaign struct {
+	Name    string
 	Content string
 	Emails   []string
 }
