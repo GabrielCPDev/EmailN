@@ -17,6 +17,9 @@ func (r *repositoryMock) Save(campaing *Campaign) error {
 	args := r.Called(campaing)
 	return args.Error(0)
 }
+func (r *repositoryMock) Get() ([]Campaign, error) {
+	return nil, nil
+}
 
 func Test_Create_Campaing(t *testing.T) {
 	assert := assert.New(t)
