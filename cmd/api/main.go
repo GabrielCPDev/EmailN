@@ -3,6 +3,9 @@ package main
 import (
 	"emailn/internal/contract"
 	"emailn/internal/domain/campaign"
+	"emailn/internal/infrastructure/database"
+	"emailn/internal/internalErrors"
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -17,7 +20,9 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	service := campaign.Service{}
+	service := campaign.Service{
+		Repository: &database.CampaignRepository{},
+	}
 
 	r.Post("/campaigns", func(w http.ResponseWriter, r *http.Request) {
 		var request contract.NewCampaign
@@ -25,10 +30,16 @@ func main() {
 		id, err := service.Create(request)
 
 		if err != nil {
-			render.Status(r, 400)
+
+			if errors.Is(err, internalErrors.ErrInternal) {
+				render.Status(r, 500)
+			} else {
+				render.Status(r, 400)
+			}
 			render.JSON(w, r, map[string]string{"error": err.Error()})
 			return
 		}
+
 		render.Status(r, 201)
 		render.JSON(w, r, map[string]string{"id": id})
 	})
