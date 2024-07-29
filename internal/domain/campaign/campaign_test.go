@@ -42,6 +42,13 @@ func Test_NewCampaing_CreatedOnMustBeNow(t *testing.T) {
 	assert.Greater(campaing.CreatedOn, now)
 }
 
+func Test_NewCampaing_MustStatusStartWithPending(t *testing.T) {
+	assert := assert.New(t)
+
+	campaing, _ := NewCampaign(name, content, contacts)
+	assert.Equal(Pending, campaing.Status)
+}
+
 func Test_NewCampaing_MustValidadeNameMin(t *testing.T) {
 	assert := assert.New(t)
 
