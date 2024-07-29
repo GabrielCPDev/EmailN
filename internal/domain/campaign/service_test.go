@@ -48,7 +48,7 @@ var (
 		Content: "Body Hi!",
 		Emails:  []string{"teste1@test.com"},
 	}
-	service = Service{}
+	service = ServiceImp{}
 )
 
 func Test_Create_Save_Campaing(t *testing.T) {
