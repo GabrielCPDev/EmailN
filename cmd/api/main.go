@@ -21,12 +21,18 @@ func main() {
 	campaignService := campaign.ServiceImp{
 		Repository: &database.CampaignRepository{Db: db},
 	}
+	handler := endpoints.Handler{
+		CampaignService: &campaignService,
+	}
+	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("pong"))
+	})
 
-	handler := endpoints.Handler{CampaignService: &campaignService}
-
-	r.Post("/campaigns", endpoints.HandlerError(handler.CampaignPost))
-		r.Get("/campaigns{id}", endpoints.HandlerError(handler.CampaignGetById))
-
+	r.Route("/campaigns", func(r chi.Router) {
+		r.Post("/", endpoints.HandlerError(handler.CampaignPost))
+		r.Get("/{id}", endpoints.HandlerError(handler.CampaignGetById))
+		r.Delete("/delete/{id}", endpoints.HandlerError(handler.CampaignDelete))
+	})
 	http.ListenAndServe(":3000", r)
 
 }
