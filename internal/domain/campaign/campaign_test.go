@@ -1,6 +1,7 @@
-package campaign
+package campaign_test
 
 import (
+	"emailn/internal/domain/campaign"
 	"testing"
 	"time"
 
@@ -11,15 +12,16 @@ import (
 var (
 	fake = faker.New()
 
-	name     = "Campaing X"
-	content  = fake.Lorem().Text(1000)
-	contacts = []string{"user@user.com", "email@email.com"}
+	name      = "Campaing X"
+	content   = fake.Lorem().Text(1000)
+	createdBy = "teste@teste.com.br"
+	contacts  = []string{"user@user.com", "email@email.com"}
 )
 
 func Test_NewCampaing_CreateNewCampaing(t *testing.T) {
 	assert := assert.New(t)
 
-	campaing, _ := NewCampaign(name, content, contacts)
+	campaing, _ := campaign.NewCampaign(name, content, contacts, createdBy)
 
 	assert.Equal(campaing.Name, name)
 	assert.Equal(campaing.Content, content)
@@ -29,7 +31,7 @@ func Test_NewCampaing_CreateNewCampaing(t *testing.T) {
 func Test_NewCampaing_IDIsNotNil(t *testing.T) {
 	assert := assert.New(t)
 
-	campaing, _ := NewCampaign(name, content, contacts)
+	campaing, _ := campaign.NewCampaign(name, content, contacts, createdBy)
 	assert.NotNil(campaing.ID)
 }
 
@@ -38,53 +40,53 @@ func Test_NewCampaing_CreatedOnMustBeNow(t *testing.T) {
 
 	now := time.Now().Add(-time.Minute)
 
-	campaing, _ := NewCampaign(name, content, contacts)
+	campaing, _ := campaign.NewCampaign(name, content, contacts, createdBy)
 	assert.Greater(campaing.CreatedOn, now)
 }
 
 func Test_NewCampaing_MustStatusStartWithPending(t *testing.T) {
 	assert := assert.New(t)
 
-	campaing, _ := NewCampaign(name, content, contacts)
-	assert.Equal(Pending, campaing.Status)
+	campaing, _ := campaign.NewCampaign(name, content, contacts, createdBy)
+	assert.Equal(campaign.Pending, campaing.Status)
 }
 
 func Test_NewCampaing_MustValidadeNameMin(t *testing.T) {
 	assert := assert.New(t)
 
-	_, err := NewCampaign("", content, contacts)
+	_, err := campaign.NewCampaign("", content, contacts, createdBy)
 	assert.Equal("name is required with min 5", err.Error())
 }
 
 func Test_NewCampaing_MustValidadeNameMax(t *testing.T) {
 	assert := assert.New(t)
-	_, err := NewCampaign(fake.Lorem().Text(30), content, contacts)
+	_, err := campaign.NewCampaign(fake.Lorem().Text(30), content, contacts, createdBy)
 	assert.Equal("name is required with max 24", err.Error())
 }
 
 func Test_NewCampaing_MustValidadeContentMin(t *testing.T) {
 	assert := assert.New(t)
 
-	_, err := NewCampaign(name, "", contacts)
+	_, err := campaign.NewCampaign(name, "", contacts, createdBy)
 	assert.Equal("content is required with min 5", err.Error())
 }
 
 func Test_NewCampaing_MustValidadeContentMax(t *testing.T) {
 	assert := assert.New(t)
 
-	_, err := NewCampaign(name, fake.Lorem().Text(1050), contacts)
+	_, err := campaign.NewCampaign(name, fake.Lorem().Text(1050), contacts, createdBy)
 	assert.Equal("content is required with max 1024", err.Error())
 }
 func Test_NewCampaing_MustValidadeContacts(t *testing.T) {
 	assert := assert.New(t)
 
-	_, err := NewCampaign(name, content, []string{"email_invalid"})
+	_, err := campaign.NewCampaign(name, content, []string{"email_invalid"}, createdBy)
 	assert.Equal("email is invalid", err.Error())
 }
 
 func Test_NewCampaing_MustValidadeContactsMin(t *testing.T) {
 	assert := assert.New(t)
 
-	_, err := NewCampaign(name, content, nil)
+	_, err := campaign.NewCampaign(name, content, nil, createdBy)
 	assert.Equal("contacts is required with min 1", err.Error())
 }
