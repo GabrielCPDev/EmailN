@@ -4,8 +4,6 @@ import (
 	"emailn/internal/contract"
 	"emailn/internal/internalErrors"
 	"errors"
-
-	"gorm.io/gorm"
 )
 
 type Service interface {
