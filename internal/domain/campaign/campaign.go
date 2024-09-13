@@ -10,20 +10,20 @@ import (
 const (
 	Pending  string = "Pending"
 	Canceled        = "Canceled"
+	Deleted         = "Deleted"
 	Started         = "Started"
 	Done            = "Done"
-	Deleted         = "Deleted"
 )
 
 type Contact struct {
 	ID         string `gorm:"size:50"`
-	Email      string `validate:"email" gorm:"size:50"`
+	Email      string `validate:"email" gorm:"size:100"`
 	CampaignId string `gorm:"size:50"`
 }
 
 type Campaign struct {
 	ID        string    `validate:"required" gorm:"size:50"`
-	Name      string    `validate:"min=5,max=24" gorm:"size:50"`
+	Name      string    `validate:"min=5,max=24" gorm:"size:100"`
 	CreatedOn time.Time `validate:"required"`
 	Content   string    `validate:"min=5,max=1024" gorm:"size:1024"`
 	Contacts  []Contact `validate:"min=1,dive"`
@@ -46,18 +46,19 @@ func NewCampaign(name string, content string, emails []string, createdBy string)
 		contacts[index].Email = email
 		contacts[index].ID = xid.New().String()
 	}
-	campaing := &Campaign{
+
+	campaign := &Campaign{
 		ID:        xid.New().String(),
 		Name:      name,
 		Content:   content,
-		Contacts:  contacts,
 		CreatedOn: time.Now(),
+		Contacts:  contacts,
 		Status:    Pending,
+		CreatedBy: createdBy,
 	}
-	err := internalErrors.ValidateStruct(campaing)
-
+	err := internalErrors.ValidateStruct(campaign)
 	if err == nil {
-		return campaing, nil
+		return campaign, nil
 	}
 	return nil, err
 }

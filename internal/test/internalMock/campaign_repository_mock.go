@@ -2,6 +2,7 @@ package internalmock
 
 import (
 	"emailn/internal/domain/campaign"
+
 	"github.com/stretchr/testify/mock"
 )
 

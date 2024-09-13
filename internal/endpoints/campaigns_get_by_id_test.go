@@ -2,7 +2,7 @@ package endpoints
 
 import (
 	"emailn/internal/contract"
-	internalMock "emailn/internal/test/internalMock"
+	internalmock "emailn/internal/test/internalMock"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -20,7 +20,7 @@ func Test_CampaignsGetById_should_return_campaign(t *testing.T) {
 		Content: "Hi!",
 		Status:  "Pending",
 	}
-	service := new(internalMock.CampaignServiceMock)
+	service := new(internalmock.CampaignServiceMock)
 	service.On("GetBy", mock.Anything).Return(&campaign, nil)
 	handler := Handler{CampaignService: service}
 	req, _ := http.NewRequest("GET", "/", nil)
@@ -35,7 +35,7 @@ func Test_CampaignsGetById_should_return_campaign(t *testing.T) {
 
 func Test_CampaignsGetById_should_return_error_when_something_wrong(t *testing.T) {
 	assert := assert.New(t)
-	service := new(internalMock.CampaignServiceMock)
+	service := new(internalmock.CampaignServiceMock)
 	errExpected := errors.New("something wrong")
 	service.On("GetBy", mock.Anything).Return(nil, errExpected)
 	handler := Handler{CampaignService: service}

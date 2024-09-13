@@ -13,12 +13,14 @@ type Service interface {
 	GetBy(id string) (*contract.CampaignResponse, error)
 	Delete(id string) error
 }
+
 type ServiceImp struct {
 	Repository Repository
 }
 
 func (s *ServiceImp) Create(newCampaign contract.NewCampaign) (string, error) {
 
+	//TODO: fix the arg createdBy
 	campaign, err := NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails, newCampaign.CreatedBy)
 	if err != nil {
 		return "", err
@@ -34,18 +36,23 @@ func (s *ServiceImp) Create(newCampaign contract.NewCampaign) (string, error) {
 func (s *ServiceImp) GetBy(id string) (*contract.CampaignResponse, error) {
 
 	campaign, err := s.Repository.GetBy(id)
+
 	if err != nil {
 		return nil, internalErrors.ProcessErrorToReturn(err)
 	}
 
 	return &contract.CampaignResponse{
-		ID:      campaign.ID,
-		Name:    campaign.Name,
-		Content: campaign.Content,
-		Status:  campaign.Status}, nil
+		ID:                   campaign.ID,
+		Name:                 campaign.Name,
+		Content:              campaign.Content,
+		Status:               campaign.Status,
+		AmountOfEmailsToSend: len(campaign.Contacts),
+		CreatedBy:            campaign.CreatedBy,
+	}, nil
 }
 
 func (s *ServiceImp) Delete(id string) error {
+
 	campaign, err := s.Repository.GetBy(id)
 
 	if err != nil {

@@ -4,7 +4,6 @@ import (
 	"emailn/internal/contract"
 	"emailn/internal/domain/campaign"
 	"emailn/internal/internalErrors"
-	internalerrors "emailn/internal/internalErrors"
 	internalmock "emailn/internal/test/internalMock"
 	"errors"
 	"testing"
@@ -41,7 +40,7 @@ func Test_Create_ValidateDomainError(t *testing.T) {
 
 	_, err := service.Create(contract.NewCampaign{})
 
-	assert.False(errors.Is(internalerrors.ErrInternal, err))
+	assert.False(errors.Is(internalErrors.ErrInternal, err))
 }
 
 func Test_Create_SaveCampaign(t *testing.T) {
@@ -70,7 +69,7 @@ func Test_Create_ValidateRepositorySave(t *testing.T) {
 
 	_, err := service.Create(newCampaign)
 
-	assert.True(errors.Is(internalerrors.ErrInternal, err))
+	assert.True(errors.Is(internalErrors.ErrInternal, err))
 }
 
 func Test_GetById_ReturnCampaing(t *testing.T) {
@@ -100,7 +99,7 @@ func Test_GetById_ReturnErrorWhenSomethingWrongExist(t *testing.T) {
 
 	_, err := service.GetBy(campaign.ID)
 
-	assert.Equal(internalerrors.ErrInternal.Error(), err.Error())
+	assert.Equal(internalErrors.ErrInternal.Error(), err.Error())
 }
 
 func Test_Delete_ReturnRecordNotFound_when_campaign_does_not_exist(t *testing.T) {

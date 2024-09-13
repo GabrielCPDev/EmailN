@@ -10,83 +10,101 @@ import (
 )
 
 var (
-	fake = faker.New()
-
-	name      = "Campaing X"
-	content   = fake.Lorem().Text(1000)
+	name      = "Campaign X"
+	content   = "Body Hi!"
+	contacts  = []string{"email1@e.com", "email2@e.com"}
 	createdBy = "teste@teste.com.br"
-	contacts  = []string{"user@user.com", "email@email.com"}
+	fake      = faker.New()
 )
 
-func Test_NewCampaing_CreateNewCampaing(t *testing.T) {
+func Test_NewCampaign_CreateCampaign(t *testing.T) {
 	assert := assert.New(t)
 
-	campaing, _ := campaign.NewCampaign(name, content, contacts, createdBy)
+	campaign, _ := campaign.NewCampaign(name, content, contacts, createdBy)
 
-	assert.Equal(campaing.Name, name)
-	assert.Equal(campaing.Content, content)
-	assert.Equal(len(campaing.Contacts), len(contacts))
+	assert.Equal(campaign.Name, name)
+	assert.Equal(campaign.Content, content)
+	assert.Equal(len(campaign.Contacts), len(contacts))
+	assert.Equal(createdBy, campaign.CreatedBy)
 }
 
-func Test_NewCampaing_IDIsNotNil(t *testing.T) {
+func Test_NewCampaign_IDIsNotNill(t *testing.T) {
 	assert := assert.New(t)
 
-	campaing, _ := campaign.NewCampaign(name, content, contacts, createdBy)
-	assert.NotNil(campaing.ID)
+	campaign, _ := campaign.NewCampaign(name, content, contacts, createdBy)
+
+	assert.NotNil(campaign.ID)
 }
 
-func Test_NewCampaing_CreatedOnMustBeNow(t *testing.T) {
+func Test_NewCampaign_MustStatusStartWithPending(t *testing.T) {
 	assert := assert.New(t)
 
+	cp, _ := campaign.NewCampaign(name, content, contacts, createdBy)
+
+	assert.Equal(campaign.Pending, cp.Status)
+}
+
+func Test_NewCampaign_CreatedOnMustBeNow(t *testing.T) {
+	assert := assert.New(t)
 	now := time.Now().Add(-time.Minute)
 
-	campaing, _ := campaign.NewCampaign(name, content, contacts, createdBy)
-	assert.Greater(campaing.CreatedOn, now)
+	campaign, _ := campaign.NewCampaign(name, content, contacts, createdBy)
+
+	assert.Greater(campaign.CreatedOn, now)
 }
 
-func Test_NewCampaing_MustStatusStartWithPending(t *testing.T) {
-	assert := assert.New(t)
-
-	campaing, _ := campaign.NewCampaign(name, content, contacts, createdBy)
-	assert.Equal(campaign.Pending, campaing.Status)
-}
-
-func Test_NewCampaing_MustValidadeNameMin(t *testing.T) {
+func Test_NewCampaign_MustValidateNameMin(t *testing.T) {
 	assert := assert.New(t)
 
 	_, err := campaign.NewCampaign("", content, contacts, createdBy)
+
 	assert.Equal("name is required with min 5", err.Error())
 }
 
-func Test_NewCampaing_MustValidadeNameMax(t *testing.T) {
+func Test_NewCampaign_MustValidateNameMax(t *testing.T) {
 	assert := assert.New(t)
+
 	_, err := campaign.NewCampaign(fake.Lorem().Text(30), content, contacts, createdBy)
+
 	assert.Equal("name is required with max 24", err.Error())
 }
 
-func Test_NewCampaing_MustValidadeContentMin(t *testing.T) {
+func Test_NewCampaign_MustValidateContentMin(t *testing.T) {
 	assert := assert.New(t)
 
 	_, err := campaign.NewCampaign(name, "", contacts, createdBy)
+
 	assert.Equal("content is required with min 5", err.Error())
 }
 
-func Test_NewCampaing_MustValidadeContentMax(t *testing.T) {
+func Test_NewCampaign_MustValidateContentMax(t *testing.T) {
 	assert := assert.New(t)
 
-	_, err := campaign.NewCampaign(name, fake.Lorem().Text(1050), contacts, createdBy)
+	_, err := campaign.NewCampaign(name, fake.Lorem().Text(1040), contacts, createdBy)
+
 	assert.Equal("content is required with max 1024", err.Error())
 }
-func Test_NewCampaing_MustValidadeContacts(t *testing.T) {
-	assert := assert.New(t)
 
-	_, err := campaign.NewCampaign(name, content, []string{"email_invalid"}, createdBy)
-	assert.Equal("email is invalid", err.Error())
-}
-
-func Test_NewCampaing_MustValidadeContactsMin(t *testing.T) {
+func Test_NewCampaign_MustValidateContactsMin(t *testing.T) {
 	assert := assert.New(t)
 
 	_, err := campaign.NewCampaign(name, content, nil, createdBy)
+
 	assert.Equal("contacts is required with min 1", err.Error())
+}
+
+func Test_NewCampaign_MustValidateContacts(t *testing.T) {
+	assert := assert.New(t)
+
+	_, err := campaign.NewCampaign(name, content, []string{"email_invalid"}, createdBy)
+
+	assert.Equal("email is invalid", err.Error())
+}
+
+func Test_NewCampaign_MustValidateCreatedBy(t *testing.T) {
+	assert := assert.New(t)
+
+	_, err := campaign.NewCampaign(name, content, contacts, "")
+
+	assert.Equal("createdby is invalid", err.Error())
 }
