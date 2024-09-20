@@ -34,6 +34,9 @@ type Campaign struct {
 func (c *Campaign) Cancel() {
 	c.Status = Canceled
 }
+func (c *Campaign) Done() {
+	c.Status = Done
+}
 
 func (c *Campaign) Delete() {
 	c.Status = Deleted
