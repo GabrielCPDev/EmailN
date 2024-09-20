@@ -19,7 +19,6 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	mail.SendMail()
 
 	r := chi.NewRouter()
 
