@@ -4,11 +4,13 @@ import (
 	"emailn/internal/domain/campaign"
 	"emailn/internal/endpoints"
 	"emailn/internal/infrastructure/database"
+	"emailn/internal/infrastructure/mail"
+	"log"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
-	"log"
-	"net/http"
 )
 
 func main() {
@@ -17,6 +19,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	mail.SendMail()
 
 	r := chi.NewRouter()
 
